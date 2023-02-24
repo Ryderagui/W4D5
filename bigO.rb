@@ -77,7 +77,7 @@ def create_anagrams(str)
     perms.map { |sub_perm| sub_perm.join("")}
 
     # take the first element of str and put it into an array. Take gizmo and grab a random char and add it to a str. if the str is not in the array then add it.
-
+    # 5, 120 5!. n!
 end
 
 # p create_anagrams("gizmo")
@@ -92,13 +92,58 @@ def second_anagram?(str1, str2)
 
     str1.each_char do |char|
         idx = arr2.index(char)
+        # this is likely a .each, for looping again
         next if idx.nil?
         arr2.delete_at(idx)
+        # this is likely a .each
     end
 
     arr2.empty?
 
 end
 
-p second_anagram?("gizmo", "sally")    #=> false
-p second_anagram?("elvis", "lives")    #=> true
+p second_anagram?("gizmogizmogizmogizmo", "sallysallysallysally")    #=> false
+p second_anagram?("elviselviselviselvis", "liveslivesliveslives")    #=> true
+
+# p first_anagram?("gizmogizmo", "sallysally")    #=> false
+# p first_anagram?("elviselvis", "liveslives")    #=> true
+
+def third_anagram?(str1,str2)
+    chars1 = str1.chars
+    # We have spent n time O(n)
+    sort1 = chars1.sort 
+    # Add n log n time
+    chars2 = str2.chars
+    # add n time
+    sort2 = chars2.sort 
+    # add n log n time
+    sort1 == sort2 
+    # add 1
+
+    # n + nlogn + n + nlogn => 2n + 2nlogn -> 2n (1 + logn) 
+    # n log n
+end 
+
+p third_anagram?("gizmogizmogizmogizmo", "sallysallysallysally")    #=> false
+p third_anagram?("elviselviselviselvis", "liveslivesliveslives")    #=> true
+# Time time complexity is nlogn
+
+def fourth_anagram?(str1,str2)
+    hash = Hash.new(0)
+
+    str1.each_char do |char|
+        hash[char] += 1
+    end
+
+    str2.each_char do |char1|
+        hash[char1] -= 1
+    end
+
+    hash.each do |k,v| 
+        return false if v != 0
+    end
+    true
+end
+
+p fourth_anagram?("gizmogizmogizmogizmo", "sallysallysallysally")    #=> false
+p fourth_anagram?("elviselviselviselvis", "liveslivesliveslives")    #=> true
