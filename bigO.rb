@@ -292,27 +292,38 @@ class MyStack
 
     def initialize
         @store = []
-        @min = 0
-        @max = 0
+        @min = [nil]
+        @max = [0]
     end
 
     def push(ele)
         @store.push(ele) # <<
 
-        if ele > @max
-            @max = ele
+        if ele > @max[-1]
+            @max << ele
+        else
+            @max << @max[-1]
         end
 
-        if @min.nil?
-            @min = ele
-        elsif ele < @min
-            @min = ele
+        if @min[-1].nil?
+            @min << ele
+        elsif ele < @min[-1]
+            @min << ele
+        else 
+            @min << @min[-1]
         end
 
     end
 
     def pop
-        @store.pop
+        num = @store.pop
+        if @max[-1] == num 
+            @max.pop
+        end
+        if @min[-1] == min
+            @min.pop 
+        end
+        num
     end
 
     def peak
@@ -325,6 +336,14 @@ class MyStack
 
     def empty?
         @store.empty?
+    end
+
+    def min 
+        @min[-1]
+    end
+
+    def max
+        @max[-1]
     end
 
 end
@@ -360,13 +379,37 @@ class StackQueue < MyStack
     end
 
     def min
-        @front.min < @back.min ? @front.min : @back.min
+        # debugger
+        if !@front.empty? && !@back.empty?
+            return @front.min < @back.min ? @front.min : @back.min
+        elsif @front.empty? && @back.empty?
+            return 0
+        end
+
+        if @front.empty? 
+            @back.min
+        elsif @back.empty? 
+            @front.min
+        end
     end
 
     def max
-        @front.max > @back.max ? @front.max : @back.max
+        if !@front.empty? && !@back.empty?
+            return @front.max > @back.max ? @front.max : @back.max
+        elsif @front.empty? && @back.empty?
+            return 0
+        end
+
+        if @front.empty? 
+            @back.max
+        elsif @back.empty? 
+            @front.max
+        end
     end
 
+    def inspect 
+        [@front,@back]
+    end
     private
 
     def slinky
@@ -387,24 +430,51 @@ def windowed_max_range(array, window_size)
 # debugger
 
     array.each_with_index do |num, i|
+        # debugger
         queue.enqueue(num)
         if queue.size > window_size
             queue.dequeue
         end
-
-        if current_max_range.nil?
-            current_max_range = (max - min)
-        elsif (max - min) > current_max_range
-            current_max_range = (max - min)
+        result = queue.max - queue.min
+        p queue.max
+        next if queue.size != window_size
+        if current_max_range.nil? && queue.size == window_size
+            current_max_range = result
+        elsif result > current_max_range && queue.size == window_size
+            current_max_range = result
         end
-
     end
-
+    puts "output"
     current_max_range
 
 end
+stack = StackQueue.new 
 
-p windowed_max_range([1, 0, 2, 5, 4, 8], 2) == 4 # 4, 8
-p windowed_max_range([1, 0, 2, 5, 4, 8], 3) == 5 # 0, 2, 5
-p windowed_max_range([1, 0, 2, 5, 4, 8], 4) == 6 # 2, 5, 4, 8
-p windowed_max_range([1, 3, 2, 5, 4, 8], 5) == 6 # 3, 2, 5, 4, 8
+# stack.enqueue(1)
+# p stack.max
+# stack.enqueue(0)
+# p stack.max
+# stack.enqueue(2)
+# p stack.max
+# stack.enqueue(5)
+# p stack.max
+# stack.enqueue(4)
+# p stack.max
+# stack.dequeue
+# p stack.max
+# stack.enqueue(8)
+# p stack
+# p stack.max
+# stack.dequeue
+# p stack.max
+
+p "First"
+p windowed_max_range([1, 0, 2, 5, 4, 8], 2) # 4, 8
+p "Second"
+p windowed_max_range([1, 0, 2, 5, 4, 8], 3) # 0, 2, 5
+p "Third"
+p windowed_max_range([1, 0, 2, 5, 4, 8], 4) # 2, 5, 4, 8
+p "Fourth"
+p windowed_max_range([1, 3, 2, 5, 4, 8], 5) # 3, 2, 5, 4, 8
+
+# 1,2,0,4 => 4 => 0 
