@@ -268,6 +268,7 @@ class MyQueue
 
     def dequeue
         @store.shift
+        # [1,2,3] => [2,3] => self[1..-1] 
     end
 
     def peek
@@ -283,3 +284,76 @@ class MyQueue
     end
 
 end
+
+
+class MyStack 
+
+    def initialize
+        @store = []
+    end
+
+    def push(ele)
+        @store.push(ele) # <<
+    end
+    
+    def pop
+        @store.pop
+    end
+
+    def peak 
+        @store[-1]
+    end
+
+    def size 
+        @store.size
+    end 
+
+    def empty?
+        @store.empty?
+    end
+
+end
+
+class StackQueue < MyStack 
+
+    def initialize
+        super 
+        @front = MyStack.new 
+        @back = MyStack.new
+    end
+    #Our end goal is a Queue
+    # stack 1 [5,6,7]
+    # stack 2 [4,3,2,1] 
+
+    def enqueue(ele)
+        @back.push(ele)
+    end
+
+    def dequeue
+        if @front.empty? 
+            self.slinky
+        end
+        @front.pop
+    end
+
+    
+
+    def size 
+        @front.size + @back.size
+    end
+
+    def empty?
+        @front.empty? && @back.empty?
+    end 
+    
+    private
+
+    def slinky
+        until @back.empty?
+            @front.push(@back.pop)
+        end
+        return
+    end
+
+end
+
